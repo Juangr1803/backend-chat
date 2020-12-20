@@ -1,0 +1,24 @@
+{
+  "name": "backend-chat",
+  "version": "0.0.1",
+  "description": "Chat as of telegram but better",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "node",
+    "chat",
+    "messages",
+    "server"
+  ],
+  "author": "Juan Gonzalez",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
