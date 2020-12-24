@@ -1,12 +1,20 @@
 const express = require("express");
+const multer = require("multer");
+
 const response = require("../../network/response");
 const controller = require("./controller");
 const router = express.Router();
 
+// Midleware
+const upload = multer({
+  dest: "public/files/",
+});
+
 // GET
 router.get("/", (req, res) => {
+  const filterMessages = req.query.chat || null;
   controller
-    .getMessages()
+    .getMessages(filterMessages)
     .then((messageList) => {
       response.success(req, res, messageList, 200);
     })
@@ -16,9 +24,9 @@ router.get("/", (req, res) => {
 });
 
 // POST
-router.post("/", (req, res) => {
+router.post("/", upload.single("file"), (req, res) => {
   controller
-    .addMessage(req.body.user, req.body.message)
+    .addMessage(req.body.chat, req.body.user, req.body.message, req.file)
     .then((fullMessage) => {
       response.success(req, res, fullMessage, 201);
     })
@@ -33,8 +41,30 @@ router.post("/", (req, res) => {
     });
 });
 
-router.delete("/", (req, res) => {
-  response.success(req, res, "Create Success", 201);
+// PATCH
+router.patch("/:id", (req, res) => {
+  console.log(req.params.id);
+
+  controller
+    .updateMessage(req.params.id, req.body.message)
+    .then((data) => {
+      response.success(req, res, data, 200);
+    })
+    .catch((err) => {
+      response.error(req, res, "Internal error", 500, err);
+    });
+});
+
+// DELETE
+router.delete("/:id", (req, res) => {
+  controller
+    .deleteMessages(req.params.id)
+    .then(() => {
+      response.success(req, res, `Usuario ${req.params.id} eliminado`, 200);
+    })
+    .catch((err) => {
+      response.error(req, res, "Internal error", 500, err);
+    });
 });
 
 module.exports = router;
